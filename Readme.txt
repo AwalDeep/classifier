@@ -1,1 +1,0 @@
-Text classifier ,does sentiment analysis on twitter data using tweepy package of python
