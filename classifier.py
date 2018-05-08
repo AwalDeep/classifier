@@ -2,7 +2,7 @@
 """
 Created on Thu Feb 22 13:37:36 2018
 
-@author: Awal
+
 """
 
 #     IMPORTING LIBRARIES AND HEADER FILES
@@ -38,7 +38,7 @@ api = tweepy.API(auth)
 
 twt=[]
 rate=api.rate_limit_status()
-print("**** Welcome to SENTIMENT ANALYSIS by Awal ****")
+print("**** Welcome to SENTIMENT ANALYSIS by Awal,Harjot and Ishmeet ****")
 print("Enter 1 to search by hashtag. \nEnter 2 to search by user's screen name.\nEnter 3 for admin's tweets.")
 choice=int(input())
 
@@ -83,10 +83,30 @@ countp=countn=countnt=0
 with open('tweet.csv', 'r') as csvfile:
     rows = csv.reader(csvfile)
     for k in rows:
-        sentence=re.sub(r'https?:\/\/.*[\r\n]*', '', str(k))
+        
+        # DATA CLEANING
+        
+        #Removing links and retweets RT @name from tweets
+        x=re.sub(r'https?:\/\/.*[\r\n]*', '', str(k))
+        
+        z = lambda x: re.compile('\#').sub('', re.compile('RT @').sub('@', x, count=1).strip())
+        sentence=z(x)    
+                     
+        sentence = re.sub('[!@#$]', '', sentence)  #Removing @ etc..
+       
+       
+        """
+        start=sentence.split(' ')[0]
+        if(start=='RT'):
+            for c in range(0,2):
+                sentence=re.sub(sentence.split(' ')[c],' ',sentence)
+        
+        """
+        #POLARITY ASSIGNMENT
+        
         blob = TextBlob(sentence)
         polar[i]=blob.sentiment.polarity
-         
+        twt[i]=sentence 
         if(blob.sentiment.polarity>0):
             expression='Positive';        
                 
@@ -97,13 +117,14 @@ with open('tweet.csv', 'r') as csvfile:
         else:
             expression='Neutral';
             countnt +=1
-        print(expression)    
+        #print(expression)    
         result[i]=expression
         i=i+1
                 
             # -*- coding: utf-8 -*-
-print("Positive tweets: %s"%countp)
-print("Negative tweets: %s"%countn)
+print("Tweets with positive wordings :)  :- %s"%countp)
+print("Tweets with negative wordings :(  :- %s"%countn)
+print("Tweets with neutral wordings  :|  :- %s"%countnt)
 if(countn>=2*countp):
     print("Negative Response") 
 if(countp>=2*countn):
